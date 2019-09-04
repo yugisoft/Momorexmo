@@ -1,4 +1,4 @@
-package android.resurce.library.http;
+package momorexmo.module.http;
 
 public class HttpTest {
     public String httpTest = "";
