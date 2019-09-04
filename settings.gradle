@@ -1,2 +1,2 @@
-include ':app', ':library', ':libraryhttp'
+include ':app', ':library'
 rootProject.name='Momorexmo'
