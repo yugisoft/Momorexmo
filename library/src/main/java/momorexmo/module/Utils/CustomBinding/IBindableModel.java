@@ -1,7 +1,7 @@
 package momorexmo.module.Utils.CustomBinding;
 
 
-import library.yugisoft.module.Utils.CustomUtil;
+import momorexmo.module.Utils.CustomUtil;
 
 public interface IBindableModel
 {

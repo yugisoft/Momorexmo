@@ -2,9 +2,10 @@ package momorexmo.module.Utils.CustomBinding;
 
 import android.view.View;
 
-import library.yugisoft.module.INTERFACES;
+import momorexmo.module.Interfaces.OnResponse;
+
 
 public interface OnGridItemSelect<T>
 {
-    void OnSelect(INTERFACES.OnResponse<Boolean> isSelect, int positon, T item, View view);
+    void OnSelect(OnResponse<Boolean> isSelect, int positon, T item, View view);
 }
