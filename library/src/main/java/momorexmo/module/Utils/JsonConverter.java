@@ -1,20 +1,15 @@
 package momorexmo.module.Utils;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import org.json.*;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import momorexmo.module.AppSettings;
-import momorexmo.module.DataTable;
-import momorexmo.module.DateTime;
+import java.util.*;
+import momorexmo.module.*;
 import momorexmo.module.FiledAttributes.Json;
-import momorexmo.module.Generic;
-import momorexmo.module.vList;
+import momorexmo.module.Interfaces.ASerializable;
+import momorexmo.module.Interfaces.ISerializable;
+
+import static momorexmo.module.Utils.parse.*;
+
 
 
 public class JsonConverter<T> {
@@ -183,11 +178,11 @@ public class JsonConverter<T> {
                     Object value = jsonObject.get(key);
                     Class<?> clazz = f.getType();
                     if (clazz.equals(Integer.class) || clazz.equals(int.class)) {
-                        f.setInt(item, parse.toInt(value));
+                        f.setInt(item, toInt(value));
                     } else if (clazz.equals(Long.class) || clazz.equals(long.class)) {
-                        f.setLong(item, parse.toLong(value));
+                        f.setLong(item, toLong(value));
                     } else if (clazz.equals(Double.class) || clazz.equals(double.class)) {
-                        f.setDouble(item, parse.toDouble(value));
+                        f.setDouble(item, toDouble(value));
                     } else if (clazz.equals(DataTable.class)) {
                         f.set(item, parse.toDataTable(value));
                     } else if (clazz.equals(List.class) || fType.equals("list")) {
@@ -228,7 +223,7 @@ public class JsonConverter<T> {
 
     //region static
 
-    public static <E> E convertJsonToModel(String jsonData, Class<E> eClass) {
+    public static <E> E convertJsonToModel(String jsonData, Class eClass) {
         E item = null;
         try {
             JsonConverter<E> jsonConverter = new JsonConverter<>(jsonData, eClass);
@@ -239,7 +234,7 @@ public class JsonConverter<T> {
         return item;
     }
 
-    public static <E> E convertJsonToModel(String jsonData, String key, Class<E> eClass) {
+    public static <E> E convertJsonToModel(String jsonData, String key, Class eClass) {
         E item = null;
         try {
             JsonConverter<E> jsonConverter = new JsonConverter<>(jsonData, eClass);
@@ -251,7 +246,7 @@ public class JsonConverter<T> {
         return item;
     }
 
-    public static <E> E convertJsonToModel(String jsonData, String key, int index, Class<E> eClass) {
+    public static <E> E convertJsonToModel(String jsonData, String key, int index, Class eClass) {
         E item = null;
         try {
             JsonConverter<E> jsonConverter = new JsonConverter<>(jsonData, eClass);
@@ -264,7 +259,7 @@ public class JsonConverter<T> {
         return item;
     }
 
-    public static <E> E convertJsonToModel(String jsonData, int index, Class<E> eClass) {
+    public static <E> E convertJsonToModel(String jsonData, int index, Class eClass) {
         E item = null;
         try {
             JsonConverter<E> jsonConverter = new JsonConverter<>(jsonData, eClass);
@@ -277,25 +272,25 @@ public class JsonConverter<T> {
     }
 
 
-    public static <E> List<E> convertJsonToList(String jsonData, Class<E> eClass) {
+    public static <E> List<E> convertJsonToList(String jsonData, Class eClass) {
         JsonConverter<E> jsonConverter = new JsonConverter<>(jsonData, eClass);
         return jsonConverter.convertToClassList();
     }
 
-    public static <E> List<E> convertJsonToList(String jsonData, String key, Class<E> eClass) {
+    public static <E> List<E> convertJsonToList(String jsonData, String key, Class eClass) {
         JsonConverter<E> jsonConverter = new JsonConverter<>(jsonData, eClass);
         jsonConverter.setKey(key);
         return jsonConverter.convertToClassList();
     }
 
-    public static <E> List<E> convertJsonToList(String jsonData, String key, int index, Class<E> eClass) {
+    public static <E> List<E> convertJsonToList(String jsonData, String key, int index, Class eClass) {
         JsonConverter<E> jsonConverter = new JsonConverter<>(jsonData, eClass);
         jsonConverter.setKey(key);
         jsonConverter.setIndex(index);
         return jsonConverter.convertToClassList();
     }
 
-    public static <E> List<E> convertJsonToList(String jsonData, int index, Class<E> eClass) {
+    public static <E> List<E> convertJsonToList(String jsonData, int index, Class eClass) {
         JsonConverter<E> jsonConverter = new JsonConverter<>(jsonData, eClass);
         jsonConverter.setIndex(index);
         return jsonConverter.convertToClassList();
@@ -359,20 +354,20 @@ public class JsonConverter<T> {
     }
 
 
-    public static <E> List<E> convertJsonToList(Object object, String jsonData, Class<E> eClass) {
+    public static <E> List<E> convertJsonToList(Object object, String jsonData, Class eClass) {
         JsonConverter<E> jsonConverter = new JsonConverter<>(jsonData,eClass);
         jsonConverter.setTargetObject(object);
         return jsonConverter.convertToClassList();
     }
 
-    public static <E> List<E> convertJsonToList(Object object, String jsonData, String key, Class<E> eClass) {
+    public static <E> List<E> convertJsonToList(Object object, String jsonData, String key, Class eClass) {
         JsonConverter<E> jsonConverter = new JsonConverter<>(jsonData,eClass);
         jsonConverter.setTargetObject(object);
         jsonConverter.setKey(key);
         return jsonConverter.convertToClassList();
     }
 
-    public static <E> List<E> convertJsonToList(Object object, String jsonData, String key, int index, Class<E> eClass) {
+    public static <E> List<E> convertJsonToList(Object object, String jsonData, String key, int index, Class eClass) {
         JsonConverter<E> jsonConverter = new JsonConverter<>(jsonData,eClass);
         jsonConverter.setTargetObject(object);
         jsonConverter.setKey(key);
@@ -380,13 +375,169 @@ public class JsonConverter<T> {
         return jsonConverter.convertToClassList();
     }
 
-    public static <E> List<E> convertJsonToList(Object object, String jsonData, int index, Class<E> eClass) {
+    public static <E> List<E> convertJsonToList(Object object, String jsonData, int index, Class eClass) {
         JsonConverter<E> jsonConverter = new JsonConverter<>(jsonData,eClass);
         jsonConverter.setTargetObject(object);
         jsonConverter.setIndex(index);
         return jsonConverter.convertToClassList();
     }
 
+
+    public static String convertToJson(Object item)
+    {
+        Class cls = item.getClass();
+        String name = cls.getSimpleName().toLowerCase();
+        String type = cls.getName().toLowerCase();
+
+        JSONArray jsonArray = new JSONArray();
+        boolean isArray = (item instanceof List || item instanceof vList);
+        if (isArray)
+        {
+            ArrayList list = (item instanceof vList ? (ArrayList)((vList)item).list : (ArrayList) item);
+
+            if (list.size()>0)
+            {
+                Object listFirst = list.get(0);
+
+                //region toJsonOfArray
+                if (       cls.equals(Integer.class)
+                        || cls.equals(int.class)
+                        || cls.equals(Long.class)
+                        || cls.equals(long.class)
+                        || cls.equals(Double.class)
+                        || cls.equals(double.class)
+                        || cls.equals(DateTime.class)
+                        || cls.equals(Boolean.class)
+                        || cls.equals(String.class)
+                )
+                {
+                    return convertToJsonOfArray(list);
+                }
+                //endregion
+                else
+                    for (Object i : list)
+                    {
+
+                        try {
+                            String json = convertToJson(i);
+                            if (json.substring(0, 1).equals("["))
+                                jsonArray.put(new JSONArray(json));
+                            else
+                                jsonArray.put(new JSONObject(json));
+
+                        } catch (Exception e) {
+                        }
+                    }
+            }
+
+
+        } else {
+            JSONObject object = new JSONObject();
+
+            try
+            {
+
+                {
+                    for (Field f : CustomUtil.getFields(item)) {
+                        f.setAccessible(true);
+                        if (!f.getName().equals("$change") && !f.getName().equals("serialVersionUID"))
+                            try {
+
+                                String fName = f.getName();
+                                if(f.isAnnotationPresent(Json.class))
+                                {
+                                    Json json = f.getAnnotation(Json.class);
+
+                                    if (json.ignoreToJson())
+                                        continue;
+
+                                    String jName = f.getAnnotation(Json.class).name();
+                                    if (jName.length()>0)
+                                        fName = jName;
+
+                                }
+
+                                Object pObject = f.get(item);
+                                Class objectClass = pObject.getClass();
+                                if (objectClass.equals(Integer.class) || objectClass.equals(int.class))
+                                    object.put(fName, toInt(pObject));
+                                else if (objectClass.equals(Long.class) || objectClass.equals(long.class))
+                                    object.put(fName, toLong(pObject));
+                                else if (objectClass.equals(Double.class) || objectClass.equals(double.class))
+                                    object.put(fName, toDouble(pObject));
+                                else if (objectClass.equals(DataTable.class))
+                                    object.put(fName, ((DataTable) pObject).getJsonData());
+                                else if (objectClass.equals(DateTime.class))
+                                    object.put(fName, ((DateTime) pObject).toString());
+                                else if (objectClass.equals(Boolean.class))
+                                    object.put(fName, (pObject));
+                                else if (objectClass.equals(String.class))
+                                    object.put(fName, pObject);
+                                else if (pObject instanceof List)
+                                    object.put(fName, new JSONArray(convertToJson(pObject)));
+                                else {
+
+                                    if (pObject instanceof ASerializable)
+                                        object.put(fName, ((ASerializable) pObject).SerializeJsonObject());
+                                    else if (pObject instanceof ISerializable)
+                                        object.put(fName, ((ISerializable) pObject).SerializeJsonObject());
+                                    else if (pObject.toString().split("\\.").length > 2 && pObject.toString().indexOf("@") != -1)
+                                        object.put(fName, new JSONObject(JsonConverter.convertToJson(pObject)));
+                                    else
+                                        object.put(fName, pObject);
+                                }
+
+
+                            } catch (Exception ex) {
+                            }
+                        f.setAccessible(false);
+                    }
+                    jsonArray.put(object);
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+        }
+
+
+        try {
+            return isArray ? jsonArray.toString() : jsonArray.length() > 0 ? jsonArray.getJSONObject(0).toString() : "{}";
+        } catch (JSONException e) {
+            return "{}";
+        }
+    }
+    public static String convertToJsonOfArray(List item)
+    {
+        String data="";
+        boolean virgul = false;
+        for (Object o:item)
+        {
+            Class cls = o.getClass();
+
+            if (virgul)
+                data+=",";
+            virgul=true;
+
+            if (       cls.equals(Integer.class)
+                    || cls.equals(int.class)
+                    || cls.equals(Long.class)
+                    || cls.equals(long.class)
+                    || cls.equals(Double.class)
+                    || cls.equals(double.class)
+                    || cls.equals(Boolean.class)
+
+            )
+                data+=parse.Join("{0}",o);
+            else if (cls.equals(String.class) || cls.equals(DateTime.class))
+                data+=parse.Join("\"{0}\"",o);
+
+
+        }
+        return parse.Join("[{0}]",data);
+    }
     //endregion
 
 }
